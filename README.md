@@ -1,4 +1,4 @@
-# 🔢🔊 Math Sonify — hearing math, for ADHD KIDS -friendly learning
+# 🔢🔊 Math Sonify ADHD O1 — hearing math, for ADHD KIDS -friendly learning
 
 Author and credits : Mohamed Mortadha MANAI 
 
