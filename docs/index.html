@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Hear the Function</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #1B2A2E;
+    --surface: #22383D;
+    --surface-2: #2A4348;
+    --text: #F5F1E8;
+    --muted: #9FB3B8;
+    --yellow: #F4C550;
+    --coral: #EF7B6D;
+    --blue: #6FB6C9;
+    --correct: #8FCB8F;
+    --wrong: #E17B72;
+    --border: rgba(245,241,232,0.18);
+    --shadow: rgba(0,0,0,0.35);
+  }
+
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+      --bg: #F5F5F2;
+      --surface: #FFFFFF;
+      --surface-2: #ECECE7;
+      --text: #21302F;
+      --muted: #5E6E6D;
+      --yellow: #C9900A;
+      --coral: #C74B3F;
+      --blue: #256E90;
+      --correct: #3F8F3F;
+      --wrong: #B23A2E;
+      --border: rgba(33,48,47,0.16);
+      --shadow: rgba(0,0,0,0.10);
+    }
+  }
+  :root[data-theme="light"] {
+    --bg: #F5F5F2;
+    --surface: #FFFFFF;
+    --surface-2: #ECECE7;
+    --text: #21302F;
+    --muted: #5E6E6D;
+    --yellow: #C9900A;
+    --coral: #C74B3F;
+    --blue: #256E90;
+    --correct: #3F8F3F;
+    --wrong: #B23A2E;
+    --border: rgba(33,48,47,0.16);
+    --shadow: rgba(0,0,0,0.10);
+  }
+  :root[data-theme="dark"] {
+    --bg: #1B2A2E; --surface: #22383D; --surface-2: #2A4348;
+    --text: #F5F1E8; --muted: #9FB3B8;
+    --yellow: #F4C550; --coral: #EF7B6D; --blue: #6FB6C9;
+    --correct: #8FCB8F; --wrong: #E17B72;
+    --border: rgba(245,241,232,0.18); --shadow: rgba(0,0,0,0.35);
+  }
+
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+  }
+  html {
+    scroll-padding-top: env(safe-area-inset-top, 0px);
+  }
+  body {
+    font-family: 'Atkinson Hyperlegible', sans-serif;
+    padding-top: calc(env(safe-area-inset-top, 0px) + 28px);
+    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 40px);
+    padding-left: max(20px, env(safe-area-inset-left, 0px));
+    padding-right: max(20px, env(safe-area-inset-right, 0px));
+    transition: background 0.25s ease, color 0.25s ease;
+  }
+
+  .wrap { max-width: 640px; margin: 0 auto; }
+
+  .theme-toggle {
+    position: fixed;
+    top: calc(env(safe-area-inset-top, 0px) + 14px);
+    right: max(14px, env(safe-area-inset-right, 0px));
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 6px 10px;
+    font-size: 13px;
+    color: var(--muted);
+    cursor: pointer;
+    font-family: inherit;
+  }
+
+  h1 {
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 600;
+    font-size: 30px;
+    line-height: 1.15;
+    margin: 6px 0 8px;
+    letter-spacing: -0.01em;
+  }
+  .lede {
+    color: var(--muted);
+    font-size: 15.5px;
+    line-height: 1.55;
+    max-width: 56ch;
+    margin: 0 0 28px;
+  }
+  .lede strong { color: var(--text); }
+
+  h2 {
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 600;
+    font-size: 19px;
+    margin: 0 0 4px;
+  }
+  .section-note {
+    color: var(--muted);
+    font-size: 14px;
+    margin: 0 0 16px;
+  }
+
+  .tiles { display: flex; flex-direction: column; gap: 10px; margin-bottom: 36px; }
+
+  .tile {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .tile-curve { flex: 0 0 64px; width: 64px; height: 40px; }
+  .tile-curve svg { display: block; width: 100%; height: 100%; }
+  .tile-curve path.base { fill: none; stroke: var(--border); stroke-width: 2; }
+  .tile-curve path.trace {
+    fill: none;
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-dasharray: 1 1;
+    stroke-dashoffset: 1;
+  }
+  .tile-curve.playing path.trace {
+    animation: draw 2s linear forwards;
+  }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+  @media (prefers-reduced-motion: reduce) {
+    .tile-curve.playing path.trace { animation: none; stroke-dashoffset: 0; }
+  }
+  .tile-curve circle.root { fill: var(--muted); }
+
+  .tile-main { flex: 1; min-width: 0; }
+  .tile-expr {
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 600;
+    font-size: 18px;
+  }
+  .tile-family { font-size: 12.5px; color: var(--muted); margin-top: 2px; }
+
+  .hear-btn {
+    flex: 0 0 auto;
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    border: none;
+    border-radius: 999px;
+    padding: 10px 16px;
+    cursor: pointer;
+    color: #1B2A2E;
+    background: var(--yellow);
+    transition: transform 0.08s ease;
+  }
+  .hear-btn:active { transform: scale(0.96); }
+  .hear-btn:focus-visible, button:focus-visible, .theme-toggle:focus-visible {
+    outline: 2px solid var(--blue);
+    outline-offset: 2px;
+  }
+  .hear-btn:disabled { opacity: 0.5; cursor: default; }
+
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 0 0 24px;
+  }
+
+  .quiz-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+  }
+
+  .quiz-progress {
+    font-size: 13.5px;
+    color: var(--muted);
+    margin-bottom: 14px;
+  }
+
+  .quiz-play-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+  .quiz-play-btn {
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    border: none;
+    border-radius: 12px;
+    padding: 14px 18px;
+    cursor: pointer;
+    color: #1B2A2E;
+    background: var(--blue);
+    flex: 1;
+  }
+  .quiz-play-btn:active { transform: scale(0.98); }
+  .quiz-hint { font-size: 13px; color: var(--muted); }
+
+  .choices {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  @media (max-width: 420px) {
+    .choices { grid-template-columns: 1fr; }
+  }
+  .choice-btn {
+    font-family: 'Atkinson Hyperlegible', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    border: 1.5px solid var(--border);
+    background: var(--surface-2);
+    color: var(--text);
+    border-radius: 10px;
+    padding: 12px 10px;
+    cursor: pointer;
+    text-align: center;
+  }
+  .choice-btn:disabled { cursor: default; }
+  .choice-btn.correct { border-color: var(--correct); background: color-mix(in srgb, var(--correct) 22%, var(--surface-2)); }
+  .choice-btn.wrong { border-color: var(--wrong); background: color-mix(in srgb, var(--wrong) 22%, var(--surface-2)); }
+
+  .feedback {
+    font-size: 14.5px;
+    min-height: 20px;
+    margin-bottom: 14px;
+    font-weight: 700;
+  }
+  .feedback.correct { color: var(--correct); }
+  .feedback.wrong { color: var(--wrong); }
+
+  .next-btn, .restart-btn {
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    border: none;
+    border-radius: 10px;
+    padding: 11px 16px;
+    cursor: pointer;
+    color: #1B2A2E;
+    background: var(--coral);
+  }
+
+  .summary { text-align: left; }
+  .summary .score {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 26px;
+    margin: 4px 0 12px;
+  }
+
+  footer {
+    margin-top: 32px;
+    font-size: 12.5px;
+    color: var(--muted);
+  }
+</style>
+</head>
+<body>
+<button class="theme-toggle" id="themeToggle" type="button">Chalkboard / Whiteboard</button>
+
+<div class="wrap">
+  <h1>Hear the Function</h1>
+  <p class="lede">
+    Tap a function to hear it. The pitch traces the curve, with a short tick
+    at every zero. <strong>Every function sounds the same way, every time</strong> —
+    nothing here is random or generated by a model. Sounds only play when you
+    press a button.
+  </p>
+
+  <section>
+    <h2>Functions</h2>
+    <p class="section-note">Tap "Hear it" and watch the little curve trace along.</p>
+    <div class="tiles" id="tiles"></div>
+  </section>
+
+  <hr class="divider">
+
+  <section>
+    <h2>Practice: which one was that?</h2>
+    <p class="section-note">Press play, listen, then pick the function you heard.</p>
+    <div class="quiz-card" id="quizCard"></div>
+  </section>
+
+  <footer>Rule-based sonification — same pitch-contour and timbre rules as the Python prototype, reimplemented for the browser.</footer>
+</div>
+
+<script>
+/* ---------- Function definitions (same rules as the Python prototype) ---------- */
+const FUNCTIONS = [
+  { id: 'lin_up',   expr: 'y = 2x + 3',        family: 'linear',    f: x => 2*x + 3,        roots: [-1.5] },
+  { id: 'lin_down', expr: 'y = −x + 5',        family: 'linear',    f: x => -x + 5,         roots: [5] },
+  { id: 'quad_val', expr: 'y = x² − 3x + 2',   family: 'quadratic', f: x => x*x - 3*x + 2,  roots: [1, 2] },
+  { id: 'quad_hill',expr: 'y = −x² + 9',       family: 'quadratic', f: x => -x*x + 9,       roots: [-3, 3] },
+  { id: 'quad_narrow', expr: 'y = x² − 4',     family: 'quadratic', f: x => x*x - 4,        roots: [-2, 2] },
+  { id: 'periodic', expr: 'y = sin(x)',        family: 'periodic',  f: x => Math.sin(x),    roots: [-Math.PI, 0, Math.PI] },
+];
+
+const X_LO = -6, X_HI = 6, DURATION = 2.0, BASE_FREQ = 300, FREQ_RANGE = 350;
+const N_SAMPLES = 200;
+
+const FAMILY_LABEL = { linear: 'Linear', quadratic: 'Quadratic', periodic: 'Periodic' };
+const FAMILY_COLOR_VAR = { linear: '--yellow', quadratic: '--coral', periodic: '--blue' };
+
+/* precompute normalized sample arrays + freq contours, once */
+function computeContour(fn) {
+  const xs = [];
+  const ys = [];
+  for (let i = 0; i < N_SAMPLES; i++) {
+    const x = X_LO + (X_HI - X_LO) * i / (N_SAMPLES - 1);
+    xs.push(x);
+    ys.push(fn.f(x));
+  }
+  const yMin = Math.min(...ys), yMax = Math.max(...ys);
+  const norm = ys.map(y => (yMax - yMin < 1e-6) ? 0.5 : (y - yMin) / (yMax - yMin));
+  const freqs = norm.map(n => BASE_FREQ + n * FREQ_RANGE);
+  return { xs, norm, freqs };
+}
+FUNCTIONS.forEach(fn => { fn.contour = computeContour(fn); });
+
+/* ---------- Audio synthesis (mirrors features.py -> sound_mapping.py -> synthesize.py) ---------- */
+let audioCtx = null;
+function getCtx() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  return audioCtx;
+}
+
+function playFunctionSound(fn, onDone) {
+  const ctx = getCtx();
+  const now = ctx.currentTime;
+  const { freqs } = fn.contour;
+
+  const osc = ctx.createOscillator();
+  osc.type = (fn.family === 'quadratic') ? 'triangle' : 'sine';
+
+  const freqCurve = new Float32Array(freqs);
+  osc.frequency.setValueCurveAtTime(freqCurve, now, DURATION);
+
+  let vibrato;
+  if (fn.family === 'periodic') {
+    vibrato = ctx.createOscillator();
+    vibrato.frequency.value = 5; // 5 Hz wobble
+    const vibGain = ctx.createGain();
+    vibGain.gain.value = 20; // Hz depth, subtle
+    vibrato.connect(vibGain);
+    vibGain.connect(osc.frequency);
+    vibrato.start(now);
+    vibrato.stop(now + DURATION);
+  }
+
+  const gain = ctx.createGain();
+  gain.gain.setValueAtTime(0, now);
+  gain.gain.linearRampToValueAtTime(0.28, now + 0.01);
+  gain.gain.setValueAtTime(0.28, now + DURATION - 0.02);
+  gain.gain.linearRampToValueAtTime(0, now + DURATION);
+
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+  osc.start(now);
+  osc.stop(now + DURATION);
+
+  /* root ticks */
+  fn.roots.filter(r => r >= X_LO && r <= X_HI).forEach(r => {
+    const t = now + (r - X_LO) / (X_HI - X_LO) * DURATION;
+    const tickOsc = ctx.createOscillator();
+    tickOsc.type = 'sine';
+    tickOsc.frequency.value = 1000;
+    const tickGain = ctx.createGain();
+    tickGain.gain.setValueAtTime(0.4, t);
+    tickGain.gain.exponentialRampToValueAtTime(0.001, t + 0.05);
+    tickOsc.connect(tickGain);
+    tickGain.connect(ctx.destination);
+    tickOsc.start(t);
+    tickOsc.stop(t + 0.06);
+  });
+
+  if (onDone) setTimeout(onDone, DURATION * 1000);
+}
+
+/* ---------- Tiny inline curve sketch per tile ---------- */
+function curveSvg(fn) {
+  const W = 64, H = 40, PAD = 4;
+  const pts = fn.contour.norm.map((n, i) => {
+    const x = PAD + (W - 2*PAD) * i / (fn.contour.norm.length - 1);
+    const y = H - PAD - n * (H - 2*PAD);
+    return [x, y];
+  });
+  const d = 'M ' + pts.map(p => p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join(' L ');
+  const colorVar = FAMILY_COLOR_VAR[fn.family];
+
+  const rootDots = fn.roots.filter(r => r >= X_LO && r <= X_HI).map(r => {
+    const frac = (r - X_LO) / (X_HI - X_LO);
+    const idx = Math.round(frac * (pts.length - 1));
+    const [cx, cy] = pts[idx];
+    return `<circle class="root" cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="2"></circle>`;
+  }).join('');
+
+  return `<svg viewBox="0 0 ${W} ${H}" aria-hidden="true">
+    <path class="base" d="${d}"></path>
+    <path class="trace" d="${d}" style="stroke:var(${colorVar})" pathLength="1"></path>
+    ${rootDots}
+  </svg>`;
+}
+
+/* ---------- Render tiles ---------- */
+const tilesEl = document.getElementById('tiles');
+FUNCTIONS.forEach(fn => {
+  const tile = document.createElement('div');
+  tile.className = 'tile';
+  tile.innerHTML = `
+    <div class="tile-curve" id="curve-${fn.id}">${curveSvg(fn)}</div>
+    <div class="tile-main">
+      <div class="tile-expr">${fn.expr}</div>
+      <div class="tile-family">${FAMILY_LABEL[fn.family]}</div>
+    </div>
+    <button class="hear-btn" type="button">🔊 Hear it</button>
+  `;
+  const btn = tile.querySelector('.hear-btn');
+  const curveWrap = tile.querySelector('.tile-curve');
+  btn.addEventListener('click', () => {
+    btn.disabled = true;
+    curveWrap.classList.remove('playing');
+    void curveWrap.offsetWidth; // restart animation
+    curveWrap.classList.add('playing');
+    playFunctionSound(fn, () => { btn.disabled = false; });
+  });
+  tilesEl.appendChild(tile);
+});
+
+/* ---------- Practice quiz ---------- */
+const quizCard = document.getElementById('quizCard');
+const TOTAL_ROUNDS = 5;
+let round = 0, score = 0, currentTarget = null, hasPlayed = false, answered = false;
+
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function pickRoundOptions() {
+  currentTarget = FUNCTIONS[Math.floor(Math.random() * FUNCTIONS.length)];
+  const others = shuffle(FUNCTIONS.filter(f => f.id !== currentTarget.id)).slice(0, 3);
+  return shuffle([currentTarget, ...others]);
+}
+
+function renderIntro() {
+  quizCard.innerHTML = `
+    <p class="quiz-hint" style="margin-top:0;">5 short rounds. You'll hear a sound, then pick which function made it.</p>
+    <button class="next-btn" id="startBtn" type="button">Start practice</button>
+  `;
+  document.getElementById('startBtn').addEventListener('click', startRound);
+}
+
+function startRound() {
+  round += 1;
+  hasPlayed = false;
+  answered = false;
+  const options = pickRoundOptions();
+
+  quizCard.innerHTML = `
+    <div class="quiz-progress">Round ${round} of ${TOTAL_ROUNDS} · Score: ${score}</div>
+    <div class="quiz-play-row">
+      <button class="quiz-play-btn" id="playBtn" type="button">🔊 Hear it</button>
+      <span class="quiz-hint" id="playHint">Listen first, then choose below.</span>
+    </div>
+    <div class="choices" id="choices"></div>
+    <div class="feedback" id="feedback"></div>
+  `;
+
+  const choicesEl = document.getElementById('choices');
+  options.forEach(opt => {
+    const b = document.createElement('button');
+    b.className = 'choice-btn';
+    b.type = 'button';
+    b.textContent = opt.expr;
+    b.disabled = true;
+    b.addEventListener('click', () => handleAnswer(opt, b, choicesEl));
+    choicesEl.appendChild(b);
+  });
+
+  document.getElementById('playBtn').addEventListener('click', () => {
+    document.getElementById('playBtn').disabled = true;
+    playFunctionSound(currentTarget, () => {
+      document.getElementById('playBtn').disabled = false;
+      if (!hasPlayed) {
+        hasPlayed = true;
+        document.getElementById('playHint').textContent = 'Choose the function you heard, or listen again.';
+        choicesEl.querySelectorAll('.choice-btn').forEach(b => b.disabled = false);
+      }
+    });
+  });
+}
+
+function handleAnswer(opt, btnEl, choicesEl) {
+  if (answered) return;
+  answered = true;
+  const isCorrect = opt.id === currentTarget.id;
+  if (isCorrect) score += 1;
+
+  choicesEl.querySelectorAll('.choice-btn').forEach(b => {
+    b.disabled = true;
+    if (b.textContent === currentTarget.expr) b.classList.add('correct');
+  });
+  if (!isCorrect) btnEl.classList.add('wrong');
+
+  const feedback = document.getElementById('feedback');
+  feedback.textContent = isCorrect ? 'Correct!' : `Not quite — that was ${currentTarget.expr}`;
+  feedback.className = 'feedback ' + (isCorrect ? 'correct' : 'wrong');
+
+  document.getElementById('playBtn').insertAdjacentHTML('afterend', '');
+  const nextWrap = document.createElement('button');
+  nextWrap.className = 'next-btn';
+  nextWrap.type = 'button';
+  nextWrap.textContent = round < TOTAL_ROUNDS ? 'Next round' : 'See results';
+  nextWrap.addEventListener('click', () => {
+    if (round < TOTAL_ROUNDS) startRound();
+    else renderSummary();
+  });
+  document.getElementById('quizCard').appendChild(nextWrap);
+}
+
+function renderSummary() {
+  quizCard.innerHTML = `
+    <div class="summary">
+      <div class="quiz-hint">Practice complete</div>
+      <div class="score">${score} / ${TOTAL_ROUNDS} correct</div>
+      <button class="restart-btn" id="restartBtn" type="button">Play again</button>
+    </div>
+  `;
+  document.getElementById('restartBtn').addEventListener('click', () => {
+    round = 0; score = 0;
+    renderIntro();
+  });
+}
+
+renderIntro();
+
+/* ---------- Theme toggle (manual override on top of system preference) ---------- */
+const toggle = document.getElementById('themeToggle');
+let manualTheme = null;
+toggle.addEventListener('click', () => {
+  const prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
+  if (manualTheme === null) manualTheme = prefersLight ? 'dark' : 'light';
+  else manualTheme = (manualTheme === 'light') ? 'dark' : 'light';
+  document.documentElement.setAttribute('data-theme', manualTheme);
+});
+</script>
+</body>
+</html>
