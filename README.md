@@ -1,4 +1,6 @@
-# 🔢🔊 Math Sonify — hearing math, for ADHD-friendly learning
+# 🔢🔊 Math Sonify — hearing math, for ADHD KIDS -friendly learning
+
+Author and credits : Mohamed Mortadha MANAI 
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-blue.svg)](https://www.python.org/)
