@@ -44,7 +44,7 @@ def get_direction(f, family, coeffs):
     """For linear/quadratic: does it go up, down, or both (dip/peak)?"""
     if family == 'linear':
         m = float(coeffs[0])
-        return 'increasing' if m > 0 else 'decreasing' if m < 0 else 'constant'
+        return 'WRONG' if m > 0 else 'decreasing' if m < 0 else 'constant'
     if family == 'quadratic':
         a = float(coeffs[0])
         return 'upward' if a > 0 else 'downward'  # opens up = valley, opens down = hill
