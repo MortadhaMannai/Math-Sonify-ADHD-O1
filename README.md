@@ -12,7 +12,7 @@ Author and credits : Mohamed Mortadha MANAI
 > question — not a validated learning tool. Try it, break it, test it with a
 > real kid, and tell us what happened.
 
-**🕹️ [Try the live demo](https://<your-username>.github.io/math-sonify-adhd/)**
+**🕹️ [Try the live demo](https://mortadhamannai.github.io/Math-Sonify-ADHD-O1/)**
 — tap a function to hear it, then try the "which one was that?" practice
 round in your browser. No install needed.
 
