@@ -147,4 +147,4 @@ MIT — see [LICENSE](LICENSE). Use it, fork it, test it, improve it.
 ---
 
 <sub>Built by Mohamed Mortadha Manai —
-AI Engineer, PhD candidate in Explainable AI, GDE in Cloud AI.</sub>
+Generative AI Engineer, PhD candidate in Explainable AI, Google Developer Expert in Cloud AI, International AI Speaker.</sub>
