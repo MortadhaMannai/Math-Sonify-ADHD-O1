@@ -16,6 +16,9 @@ Author and credits : Mohamed Mortadha MANAI
 — tap a function to hear it, then try the "which one was that?" practice
 round in your browser. No install needed.
 
+![Texte alternatif](docs/Logo/3b0c6af1-3c93-4e63-a50d-84117321dd88.jpeg)
+
+
 ---
 
 ## Table of contents
