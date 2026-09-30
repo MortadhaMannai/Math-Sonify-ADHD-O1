@@ -1,7 +1,7 @@
 # 🔢🔊 Math Sonify ADHD O1 — hearing math, for ADHD KIDS -friendly learning
 
 Author and credits : Mohamed Mortadha MANAI 
-
+ 
 [![Tests](https://github.com/MortadhaMannai/Math-Sonify-ADHD-O1/actions/workflows/tests.yml/badge.svg)](https://github.com/MortadhaMannai/Math-Sonify-ADHD-O1/actions/workflows/tests.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-blue.svg)](https://www.python.org/)
