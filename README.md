@@ -71,7 +71,7 @@ Generate all five yourself in under a minute — see Quickstart below.
 ## Quickstart
 
 ```bash
-git clone https://github.com/<your-username>/math-sonify-adhd.git
+git clone https://github.com/MortadhaMannai/math-sonify-adhd.git
 cd math-sonify-adhd
 python3 -m venv venv && source venv/bin/activate   # Windows: venv\Scripts\activate
 pip install -r requirements.txt
